@@ -47,3 +47,26 @@ class Trip:
         for stopPoint in self._stopPointList:
             description += "\n%s" % (stopPoint)
         return description
+
+class Timetable:
+    def __init__(self, name, numOfNbTrips, numOfSbTrips, tableType, description):
+        self._name = name
+        self._numOfNbTrips = int(numOfNbTrips)
+        self._numOfSbTrips = int(numOfSbTrips)
+        self._tableType = tableType
+        self._description = description
+        self._tripList = []
+        
+    def addTrip(self, trip):
+        self._tripList.append(trip)
+        
+    def shiftTrips(self, delta):
+        for trip in self._tripList:
+            trip.shiftTime(delta)
+            
+    def __repr__(self):
+        description = "Timetable: %s %d %d %s %s" % (self._name, self._numOfNbTrips, self._numOfSbTrips, self._tableType, self._description)
+        
+        for trip in self._tripList:
+            description += "\n%s" % (trip)
+        return description

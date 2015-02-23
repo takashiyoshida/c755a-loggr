@@ -1,1 +1,1 @@
-from .timetable import StopPoint
+from .timetable import StopPoint, Trip, Timetable
