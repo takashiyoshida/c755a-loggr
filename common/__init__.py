@@ -1,1 +1,1 @@
-from .patterns import ScsPattern
+from .patterns import ScsPattern, TimetablePattern
