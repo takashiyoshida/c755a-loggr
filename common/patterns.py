@@ -43,3 +43,11 @@ class ScsPattern:
     # Typically matches messages like:
     # [0] TmcSupServer@OCCATS_nelats1a 1/16/15 2:9:46.152 <19306/19306> (tmcsup:815) << ====  Scadasoft init OK  ==== >>
     header          = "\[.+\] (%s)@(%s)_(%s) (%s)%s\s?(%s)" % (process, env, server, ltimestamp, unusedText, text)
+
+# Regex pattern for plaintext timetable file
+class TimetablePattern:
+    name         = "NOMBRE=(.+)"
+    numOfNbTrips = "NBTRIPDIR1=(\d+)"
+    numOfSbTrips = "NBTRIPDIR2=(\d+)"
+    tableType    = "TIPO=(.+)"
+    description  = "DESCRP=\"(.+)\""
