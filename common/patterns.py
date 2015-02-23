@@ -4,7 +4,7 @@ class ScsPattern:
     # Examples: RadCtlServer, SigCtlServer, TmcSupServer, etc
     process = "[A-Za-z]+"
     # Examples: OCCCMS, NEDSMS, HBFSMS, etc
-    env     = "[A-Z]{6}
+    env     = "[A-Z]{6}"
     # Examples: nelscs1a, neldcs1a, nelhbf1a, etc
     server  = "nel[a-z]{3}[12]a"
     
