@@ -34,7 +34,7 @@ class ScsPattern:
     ltimestamp = "%s %s" % (date, ltime)
     
     unusedTimestamp = "\s?\(%s\)" % (ltimestamp)
-    unknownValue    = "<\d+:\d+>"
+    unknownValue    = "<\d+/\d+>"
     sourceLine      = "\(.+:\d+\)"
     
     unusedText      = "(%s)? %s %s" % (unusedTimestamp, unknownValue, sourceLine)
