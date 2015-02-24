@@ -51,3 +51,18 @@ class TimetablePattern:
     numOfSbTrips = "NBTRIPDIR2=(\d+)"
     tableType    = "TIPO=(.+)"
     description  = "DESCRP=\"(.+)\""
+
+
+# Regex pattern for tmc_log
+
+class TmcPattern:
+    carNo = "\d+"
+    stopPoint = "[A-Z]{4}"
+    platform = "[A-Z0-9]{4}"
+    event = "[A-Z]{3,4}"
+
+    arrivalControl = "<<Arrival ctrl sent to Car# (%s), StopPoint (%s)?, time\(\d+\) (%s)" % (carNo, stopPoint, ScsPattern.time)
+    departureControl = "<<Departure ctrl sent to Car# (%s), StopPoint (%s)?, time\(\d+\) (%s)" % (carNo, stopPoint, ScsPattern.time)
+
+    enterPlatform = "<<Car (%s) \(.+\) entering platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
+    exitPlatform = "<<Car (%s) \(.+\) exiting platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
