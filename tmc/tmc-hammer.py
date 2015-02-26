@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+import argparse
 from common.parsers import ScsLogParser
 from common.patterns import TmcPattern
-
 from datetime import datetime
 import re
 
@@ -20,8 +20,15 @@ class TmcEvent:
 
 
 if __name__ == "__main__":
-    parser = ScsLogParser()
-    eventList = parser.parse_log('../data/tmc_log.0')
+    parser = argparse.ArgumentParser(prog = "tmc-hammer",
+                                     description = "")
+    parser.add_argument("-l", "--log", required = True, help = "tmc_log", dest = "log")
+    args = parser.parse_args()
+    print args
+        
+    
+    logParser = ScsLogParser()
+    eventList = logParser.parse_log(args.log)
 
     tmcEventList = []
     tmcEvent = None
