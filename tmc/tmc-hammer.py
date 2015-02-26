@@ -3,9 +3,10 @@
 import argparse
 from common.parsers import ScsLogParser
 from common.patterns import TmcPattern
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
-
+import sys
+from tmc.timetable import Timetable, TimetableParser
 
 class TmcEvent:
     def __init__(self, timestamp, carNo, stopPoint, eventTime, event = None):
@@ -19,14 +20,28 @@ class TmcEvent:
         return "TmcEvent: %s %s %s %s %s" % (self._timestamp, self._carNo, self._stopPoint, self._eventTime, self._event)
 
 
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog = "tmc-hammer",
                                      description = "")
     parser.add_argument("-l", "--log", required = True, help = "tmc_log", dest = "log")
+    parser.add_argument("-t", "--timetable", help = "plaintext timetable", dest = "timetable")
+    parser.add_argument("-s", "--shift", nargs = 2, type = int, help = "Shift the trips in timetable by [+-]HH MM", dest = "delta")
+
     args = parser.parse_args()
     print args
-        
-    
+
+    # argparse might provide a more elegant way to check for this...
+    if args.delta:
+        if args.timetable == None:
+            # print some error message here
+            sys.exit(1)
+
+        delta = timedelta(hours = args.delta[0], minutes = args.delta[1])
+        print delta
+
     logParser = ScsLogParser()
     eventList = logParser.parse_log(args.log)
 
@@ -52,3 +67,10 @@ if __name__ == "__main__":
 
     for tmcEvent in tmcEventList:
         print tmcEvent
+
+    if args.timetable:
+        ttParser = TimetableParser()
+        tt = ttParser.parse_timetable(args.timetable)
+        if args.delta:
+            tt.shiftTrips(delta)
+        print tt
