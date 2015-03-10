@@ -3,7 +3,7 @@
 from datetime import datetime
 import re
 
-from common.patterns import ScsPattern
+from common.patterns import ScsPattern, RadPattern
 
 class ScsLogEvent:
     def __init__(self, process, env, server, timestamp, text):
@@ -52,3 +52,31 @@ class ScsLogParser:
                 eventList.append(event)
                 
         return eventList
+
+
+class RadLogParser:
+    def parse_log(self, infile):
+        state = ScsLogParserState.unknown
+        lineCount = 0
+                
+        with open('rad_parsefailure', 'w') as error:
+            with open(infile, 'r') as log:
+                for line in log:
+                    line = line.strip()
+                    lineCount += 1
+                    
+                    match = re.match(RadPattern.header, line)
+                    if match:
+                        print match.groups()
+                        state = ScsLogParserState.header
+                    else:
+                        match = re.match(RadPattern.binary, line)
+                        if match:
+                            if state == ScsLogParserState.unknown:
+                                error.write("ERROR: Encountered binary data without a header [%d]\n%s\n" % (lineCount, line))
+                            else:
+                                print match.groups()
+                                state = ScsLogParserState.multiline
+                        else:
+                            error.write("ERROR: Unable to match against any RadPattern [%d]\n%s\n" % (lineCount, line))
+                            state = ScsLogParserState.unknown

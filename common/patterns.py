@@ -11,7 +11,7 @@ class ScsPattern:
     # Date and time format of processes are somewhat inconsistent. Some use single-digit
     # month, day, hour, minute and second when the value is less than 10.
     
-    month = "[0-2]?[0-9]"
+    month = "[01]?[0-9]"
     day   = "[0-3]?[0-9]"
     year  = "[0-9]{2}"
     
@@ -66,3 +66,26 @@ class TmcPattern:
 
     enterPlatform = "<<Car (%s) \(.+\) entering platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
     exitPlatform = "<<Car (%s) \(.+\) exiting platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
+
+#02/03 09:18:19 (02/03 09:18:19) [Snd 14] Length = 28; SessRef = 8; TransId = 7678; Status = 0; Method = f; Param = 
+
+
+class RadPattern:
+    hexadecimal = "[0-9a-fA-F]"
+    
+    sdate = "%s/%s" % (ScsPattern.day, ScsPattern.month)
+    stimestamp = "%s %s" % (sdate, ScsPattern.time)
+    
+    unusedTimestamp = "\(%s\)" % (stimestamp)
+    unknownValue = "\[.+\]"
+    unusedText = "%s %s" % (unusedTimestamp, unknownValue)
+    
+    length = "Length = (\d+)"
+    sessRef = "SessRef = (\d+)"
+    transId = "TransId = (\d+)"
+    status = "Status = (-?\d+)"
+    type = "(Event|Method) = (%s+)" % (hexadecimal)
+    
+    header = "(%s) %s %s; %s; %s; %s; %s;" % (stimestamp, unusedText, length, sessRef, transId, status, type)
+    
+    binary = "([0-9a-fA-F ]{,80})"
