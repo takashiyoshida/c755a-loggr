@@ -86,6 +86,7 @@ class RadLogParam:
             desc += "%s\n" % (self._bin[i:i + 60])
         return desc
 
+
 class RadLogParser:
     def parse_log(self, infile):
         state = ScsLogParserState.unknown
