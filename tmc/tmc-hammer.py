@@ -9,11 +9,14 @@ import sys
 from tmc.timetable import Timetable, TimetableParser
 
 class TmcEvent:
-    def __init__(self, timestamp, carNo, stopPoint, eventTime, event = None):
+    def __init__(self, timestamp, carNo, stopPoint, eventTime = None, event = None):
         self._timestamp = timestamp
         self._carNo = carNo
         self._stopPoint = stopPoint
-        self._eventTime = datetime.strptime(eventTime, "%H:%M:%S")
+        if eventTime != None:
+            self._eventTime = datetime.strptime(eventTime, "%H:%M:%S")
+        else:
+            self._eventTime = timestamp
         self._event = event
 
     def __repr__(self):
@@ -61,6 +64,12 @@ if __name__ == "__main__":
         match = re.match(TmcPattern.exitPlatform, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), match.group(4))
+        match = re.match(TmcPattern.routeAssign, event._text)
+        if match:
+            tmcEvent = TmcEvent(event._timestamp, match.group(2), match.group(1), None, "Route Assignment")
+        match = re.match(TmcPattern.routeSet, event._text)
+        if match:
+            tmcEvent = TmcEvent(event._timestamp, None, match.group(1), match.group(2), "Route Set")
         if tmcEvent != None:
             tmcEventList.append(tmcEvent)
             tmcEvent = None

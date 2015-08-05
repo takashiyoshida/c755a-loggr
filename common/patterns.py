@@ -60,6 +60,7 @@ class TmcPattern:
     stopPoint = "[A-Z]{4}"
     platform = "[A-Z0-9]{4}"
     event = "[A-Z]{3,4}"
+    route = "R\d{3}_\d{3}"
 
     arrivalControl = "<<Arrival ctrl sent to Car# (%s), StopPoint (%s)?, time\(\d+\) (%s)" % (carNo, stopPoint, ScsPattern.time)
     departureControl = "<<Departure ctrl sent to Car# (%s), StopPoint (%s)?, time\(\d+\) (%s)" % (carNo, stopPoint, ScsPattern.time)
@@ -67,8 +68,8 @@ class TmcPattern:
     enterPlatform = "<<Car (%s) \(.+\) entering platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
     exitPlatform = "<<Car (%s) \(.+\) exiting platform (%s), time (%s), event (%s) .+>>" % (carNo, platform, ScsPattern.time, event)
 
-#02/03 09:18:19 (02/03 09:18:19) [Snd 14] Length = 28; SessRef = 8; TransId = 7678; Status = 0; Method = f; Param = 
-
+    routeAssign = "<<Assignment of Route (%s) for train (%s)>>" % (route, carNo)
+    routeSet = "<<SET ctrl sent to route (%s), time (%s)>>" % (route, ScsPattern.time)
 
 class RadPattern:
     hexadecimal = "[0-9a-fA-F]"
