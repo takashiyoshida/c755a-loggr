@@ -70,20 +70,29 @@ class RadLogEvent:
     def __repr__(self):
         header = "RadLogEvent: %s %d %d %d %d %s" % (self._timestamp, self._length, self._sessRef, self._transId, self._status, hex(self._eventType))
         return "%s\n%s" % (header, self._param)
-
-
+    
+    
 class RadLogParam:
     def __init__(self):
-        self._bin = ""
+        self._data = []
 
-    def appendBin(self, data):
-        temp = data.split('   ')
-        self._bin += " %s" % (temp[0])
+    def append_byte_stream(self, data):
+        stream = data.strip().split(' ')
+        for byte in stream:
+            try:
+                num = int(byte, 16)
+                if num != None:
+                    self._data.append(num)
+            except ValueError as e:
+                print data
+                print str(e)
+                return False
+        return True
 
     def __repr__(self):
         desc = ""
-        for i in range(0, len(self._bin), 60):
-            desc += "%s\n" % (self._bin[i:i + 60])
+        for i in range(0, len(self._data), 20):
+            desc += "%s\n" % (self._data[i:i + 20])
         return desc
 
 
@@ -117,8 +126,11 @@ class RadLogParser:
                             if state == ScsLogParserState.unknown:
                                 error.write("ERROR: Encountered binary data without a header [%d]\n%s\n" % (lineCount, line))
                             else:
-                                bin.appendBin(match.group(1))
-                                state = ScsLogParserState.multiline
+                                if bin.append_byte_stream(match.group(1).split('  ')[0]):
+                                    state = ScsLogParserState.multiline
+                                else:
+                                    state = ScsLogParserState.unknown
+                                    error.write("ERROR: Unable to parse byte stream [%d]\n%s\n" % (lineCount, line))
                         else:
                             error.write("ERROR: Unable to match against any RadPattern [%d]\n%s\n" % (lineCount, line))
                             state = ScsLogParserState.unknown
