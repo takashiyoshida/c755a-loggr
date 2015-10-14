@@ -71,6 +71,8 @@ class TmcPattern:
     routeAssign = "<<Assignment of Route (%s) for train (%s)>>" % (route, carNo)
     routeSet = "<<SET ctrl sent to route (%s), time (%s)>>" % (route, ScsPattern.time)
 
+    ptiControl = "<<PTI ctrl sent to Car# (%s), time (%s). (.+)>>" % (carNo, ScsPattern.time)
+
 class RadPattern:
     hexadecimal = "[0-9a-fA-F]"
     

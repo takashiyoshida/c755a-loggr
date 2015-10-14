@@ -19,12 +19,11 @@ class TmcEvent:
             self._eventTime = timestamp
         self._event = event
 
+    def csv(self):
+        return "%s,%s,%s,%s,%s" % (self._timestamp, self._carNo, self._stopPoint, self._eventTime, self._event)
+
     def __repr__(self):
         return "TmcEvent: %s %s %s %s %s" % (self._timestamp, self._carNo, self._stopPoint, self._eventTime, self._event)
-
-
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog = "tmc-hammer",
@@ -70,12 +69,15 @@ if __name__ == "__main__":
         match = re.match(TmcPattern.routeSet, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, None, match.group(1), match.group(2), "Route Set")
+        match = re.match(TmcPattern.ptiControl, event._text)
+        if match:
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(2), "PTI control sent; %s" % (match.group(3)))
         if tmcEvent != None:
             tmcEventList.append(tmcEvent)
             tmcEvent = None
 
     for tmcEvent in tmcEventList:
-        print tmcEvent
+        print tmcEvent.csv()
 
     if args.timetable:
         ttParser = TimetableParser()
