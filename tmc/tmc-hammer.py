@@ -53,16 +53,16 @@ if __name__ == "__main__":
     for event in eventList:
         match = re.match(TmcPattern.arrivalControl, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(3), "Arrival control sent; Stop point %s" % match.group(2))
         match = re.match(TmcPattern.departureControl, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(3), "Departure control sent; Stop point %s" % match.group(2))
         match = re.match(TmcPattern.enterPlatform, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), match.group(4))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(3), "Entering platform %s; event %s" % (match.group(2), match.group(4)))
         match = re.match(TmcPattern.exitPlatform, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), match.group(4))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(3), "Exiting platform %s; event %s" % (match.group(2), match.group(4)))
         match = re.match(TmcPattern.routeAssign, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, match.group(2), match.group(1), None, "Route Assignment")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             tmcEvent = TmcEvent(event._timestamp, None, match.group(1), match.group(2), "Route Set")
         match = re.match(TmcPattern.ptiControl, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(2), "PTI control sent; %s" % (match.group(3)))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(2), "PTI control sent")
         if tmcEvent != None:
             tmcEventList.append(tmcEvent)
             tmcEvent = None
