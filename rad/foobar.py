@@ -183,9 +183,9 @@ command_identifiers = {
 }
 
 class RadLogEvent:
-    def __init__(self, timestamp, transId, status, apiType, apiId, year = 2015):
+    def __init__(self, timestamp, transId, status, apiType, apiId, now = datetime.now()):
         self._timestamp = datetime.strptime(timestamp, "%d/%m %H:%M:%S")
-        self._timestamp = self._timestamp.replace(year = year)
+        self._timestamp = self._timestamp.replace(year = now.year)
 
         self._transId = int(transId)
         self._status = int(status)
@@ -200,6 +200,7 @@ class RadLogEvent:
         self._data = None
         self._atcCarNum = 0
         self._message = None
+        self._note = None
 
     def appendParam(self, param):
         # Add extra space at the beginning so that we can add '\x' when
@@ -225,6 +226,54 @@ class RadLogEvent:
                     self._message = command_identifiers[command]
                     self._getAtcCarNum(flag)
 
+                    if command == 0xb:
+                        # PA live announcement
+                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                    elif command == 0xc:
+                        # Pre-recorded announcement
+                        self._note = "Announcement ID: %d" % (self._data[flag + 11])
+                    elif command == 0xd:
+                        # DVA announcement
+                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                    elif command == 0xe:
+                        # PA reset
+                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                    elif command == 0x12:
+                        # PA continue
+                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                    elif command == 0x13:
+                        # PA command received
+                        self._note = "Announcement ID: %d" % (self._data[flag + 11])
+                    elif command == 0x14:
+                        # Ready for live or DVA announcement
+                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                    elif command == 0x16:
+                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                    elif command == 0x18:
+                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                    elif command == 0x19:
+                        self._note = "Announcement ID: %d" % (self._data[flag + 15])
+                    elif command == 0x1f:
+                        # PIS free text message
+                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                    elif command == 0x20:
+                        # PIS pre-stored message
+                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                    elif command == 0x22:
+                        # PIS library upload
+                        self._note = "Status 9: %d" % (self._data[flag + 6])
+                    elif command == 0x23:
+                        # Reset emergency message
+                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                    elif command == 0x27:
+                        # End of PIS download
+                        self._note = "Status 10: %d" % (self._data[flag + 6])
+                    elif command == 0x2a:
+                        # PIS command received
+                        self._note = "Status 5: %d" % (self._data[flag + 6])
+                    else:
+                        self._note = ""
+
         except KeyError as e:
             print e
             print self._data
@@ -243,8 +292,9 @@ class RadLogEvent:
         return param
 
     def toCsv(self):
-        return "%s,Car %d,ID (%d),%d,%s,%s,%s,%s" % (self._timestamp, self._atcCarNum, \
-            self._transId, self._status, self._apiType, hex(self._apiId), self._apiLabel, self._message)
+        return "%s,Car %d,ID (%d),%d,%s,%s,%s,%s,%s" % (self._timestamp, self._atcCarNum, \
+            self._transId, self._status, self._apiType, hex(self._apiId), self._apiLabel, \
+            self._message, self._note)
 
     def printDebug(self):
         return "RadLogEvent: %s %d %d %s %s %s\n%s" \
@@ -321,8 +371,6 @@ def parse_rad_log(infile):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog = "foobar", description = "")
-    parser.add_argument("-s", "--scs_log", required = True, help = "scs_log",
-                        dest = "scs_log")
     parser.add_argument("-r", "--rad_log", required = True, help = "rad_log",
                         dest = "rad_log")
     args = parser.parse_args()
