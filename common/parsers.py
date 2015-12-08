@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import re
+import struct
 
 from common.patterns import ScsPattern, RadPattern
 
@@ -12,10 +13,10 @@ class ScsLogEvent:
         self._server = server
         self._timestamp = datetime.strptime(timestamp, "%m/%d/%y %H:%M:%S.%f")
         self._text = text
-        
+
     def appendText(self, text):
         self._text += text
-        
+
     def __repr__(self):
         return "ScsLogEvent: %s %s %s %s %s" % (self._process, self._env, self._server, self._timestamp, self._text)
 
@@ -29,16 +30,16 @@ class ScsLogParser:
         state = ScsLogParserState.unknown
         event = None
         eventList = []
-        
+
         with open(infile, 'r') as log:
             for line in log:
                 line = line.strip()
-                
+
                 match = re.match(ScsPattern.header, line)
                 if match:
                     if state != ScsLogParserState.unknown:
                         eventList.append(event)
-                        
+
                     event = ScsLogEvent(match.group(1), match.group(2), match.group(3), match.group(4), match.group(6))
                     state = ScsLogParserState.header
                 else:
@@ -50,7 +51,7 @@ class ScsLogParser:
                         state = ScsLogParserState.multiline
             if event != None:
                 eventList.append(event)
-                
+
         return eventList
 
 
@@ -66,6 +67,7 @@ class RadLogEvent:
 
     def addParam(self, param):
         self._param = param
+        self._param.unpack()
 
     def __repr__(self):
         header = "RadLogEvent: %s %d %d %d %d %s" % (self._timestamp, self._length, self._sessRef, self._transId, self._status, hex(self._eventType))
@@ -75,10 +77,22 @@ class RadLogEvent:
 class RadLogParam:
     def __init__(self):
         self._bin = ""
+        self._data = None
 
     def appendBin(self, data):
         temp = data.split('   ')
-        self._bin += " %s" % (temp[0])
+        print temp[0]
+        self._bin += " %s" % (temp[0].rstrip())
+
+    def unpack(self):
+        try:
+            temp = self._bin.replace(' ', '\\x')
+            format = "%dB" % (len(temp.decode('string_escape')))
+            self._data = struct.unpack(format, temp.decode('string_escape'))
+        except ValueError as e:
+            print e
+            print temp
+            raise
 
     def __repr__(self):
         desc = ""
@@ -99,32 +113,19 @@ class RadLogParser:
 
         with open('rad_parsefailure', 'w') as error:
             with open(infile, 'r') as log:
+
                 for line in log:
                     line = line.strip()
                     lineCount += 1
-                    
+
                     match = re.match(RadPattern.header, line)
                     if match:
-                        if bin and event:
-                            event.addParam(bin)
-                            eventList.append(event)
-                        event = RadLogEvent(match.group(1), match.group(2), match.group(3), match.group(4), match.group(5), match.group(7))
-                        bin = RadLogParam()
                         state = ScsLogParserState.header
                     else:
-                        match = re.match(RadPattern.binary, line)
-                        if match:
-                            if state == ScsLogParserState.unknown:
-                                error.write("ERROR: Encountered binary data without a header [%d]\n%s\n" % (lineCount, line))
-                            else:
-                                bin.appendBin(match.group(1))
-                                state = ScsLogParserState.multiline
-                        else:
-                            error.write("ERROR: Unable to match against any RadPattern [%d]\n%s\n" % (lineCount, line))
-                            state = ScsLogParserState.unknown
+                        # Sometimes, the line contains binary and header together (though this is somewhat unexpected)
+                        # We see enough instances of this that cause the parsing to fail
+                        print ">>> No match <<< "
+                        print line
 
-                if bin and event:
-                    event.addParam(bin)
-                    eventList.append(event)
 
         return eventList

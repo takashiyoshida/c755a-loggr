@@ -16,9 +16,3 @@ if __name__ == "__main__":
 
     logParser = RadLogParser()
     eventList = logParser.parse_log(args.log)
-
-    for event in eventList:
-        if event._eventType == 2:
-            foo = Method_AttachSession()
-            print foo
-        print event
