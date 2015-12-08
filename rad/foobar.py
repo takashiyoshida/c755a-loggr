@@ -11,19 +11,6 @@ from common.parsers import ScsLogParserState
 from common.patterns import FoobarPattern
 from common.patterns import RadPattern
 
-class FoobarEvent:
-    def __init__(self, origin, timestamp):
-        self._origin = origin
-        self._timestamp = datetime.strptime(timestamp, "%m/%d/%y %H:%M:%S.%f")
-        self._description = ""
-
-    def appendDescription(self, description):
-        self._description += description
-
-    def __repr__(self):
-        return "FoobarEvent: %s %s %s" % (self._origin, self._timestamp,
-                                          self._description)
-
 api_identifiers = {
     0x2: "Attach Session",
     0x8002: "Attach Session",
@@ -220,46 +207,24 @@ class RadLogEvent:
         self._param += " %s" % (param.strip())
 
     def validate(self):
-        return self.validateApiIdentifier() and self.convertHexadecimalToDecimal()
-
-    def validateApiIdentifier(self):
-        try:
-            self._apiLabel = api_identifiers[self._apiId]
-            return True
-        except KeyError as e:
-            print "Error: Unrecognized API identifier: %s" % (hex(self._apiId))
-            self._apiLabel = None
-        return False
-
-    def convertHexadecimalToDecimal(self):
-        try:
-            temp = self._param.replace(' ', '\\x')
-            format = "%dB" % (len(temp.decode('string_escape')))
-            self._data = struct.unpack(format, temp.decode('string_escape'))
-            return True
-        except ValueError as e:
-            print e
-            print temp
-            self._data = None
-        return False
+        return self._validateApiIdentifier() and self._convertHexadecimalToDecimal()
 
     def decode(self):
         try:
             if self._apiId == 0x18: # Send SDS method
-                index = 44
+                flag = 44
             elif self._apiId == 0xa002: # Incoming SDS event
-                index = 76
+                flag = 76
             else:
-                index = -1
+                flag = -1
 
-            if index != -1:
-                self.printDebug()
-                if self._data[index] == 0x7:
-                    command = self._data[index + 1]
+            if flag != -1:
+                #self.printDebug()
+                if self._data[flag] == 0x7:
+                    command = self._data[flag + 1]
                     self._message = command_identifiers[command]
+                    self._getAtcCarNum(flag)
 
-                    # index + 2 and index + 3 holds the ATC car number
-                    self._atcCarNum = (self._data[index + 2] << 8 | self._data[index + 3])
         except KeyError as e:
             print e
             print self._data
@@ -286,87 +251,76 @@ class RadLogEvent:
             % (self._timestamp, self._transId, self._status, self._apiType,
                hex(self._apiId), self._apiLabel, self.getParamBlock())
 
+    def _validateApiIdentifier(self):
+        try:
+            self._apiLabel = api_identifiers[self._apiId]
+            return True
+        except KeyError as e:
+            print "Error: Unrecognized API identifier: %s" % (hex(self._apiId))
+            self._apiLabel = None
+        return False
+
+    def _convertHexadecimalToDecimal(self):
+        try:
+            temp = self._param.replace(' ', '\\x')
+            format = "%dB" % (len(temp.decode('string_escape')))
+            self._data = struct.unpack(format, temp.decode('string_escape'))
+            return True
+        except ValueError as e:
+            print e
+            print temp
+            self._data = None
+        return False
+
+    def _getAtcCarNum(self, index):
+        self._atcCarNum = (self._data[index + 2] << 8 | self._data[index + 3])
+
     def __repr__(self):
-        return "RadLogEvent: %s Car %d ID (%d) %d %s %s %s %s" % (self._timestamp, self._atcCarNum, \
+        return "RadLogEvent: %s ATC Car %d ID (%d) %d %s %s %s %s" % (self._timestamp, self._atcCarNum, \
             self._transId, self._status, self._apiType, hex(self._apiId), self._apiLabel, self._message)
-
-def parse_log(infile):
-    state = ScsLogParserState.unknown
-    event = None
-    eventList = []
-
-    with open(infile, 'r') as log:
-        for line in log:
-            line = line.strip()
-
-            match = re.match(FoobarPattern.header, line)
-            if match:
-                if state != ScsLogParserState.unknown:
-                    eventList.append(event)
-                event = FoobarEvent(match.group(1), match.group(2))
-                state = ScsLogParserState.header
-            else:
-                if state == ScsLogParserState.unknown:
-                    print "Unmatched: %s" % (line)
-                else:
-                    event.appendDescription(line)
-                    state = ScsLogParserState.multiline
-        if event != None:
-            eventList.append(event)
-
-    return eventList
 
 def parse_rad_log(infile):
     state = ScsLogParserState.unknown
     event = None
     eventList = []
 
-    with open(infile, 'r') as log:
-        for line in log:
-            line = line.strip()
+    with open('rad_parsefailure', 'w') as error:
+        with open(infile, 'r') as log:
+            for line in log:
+                line = line.strip()
 
-            match = re.match(RadPattern.header, line)
-            if match:
-                if state != ScsLogParserState.unknown:
-                    if event.validate():
-                        event.decode()
-                        eventList.append(event)
-                    else:
-                        print event.printDebug()
-                event = RadLogEvent(match.group(1), match.group(3), match.group(4), match.group(5), match.group(6))
-                state = ScsLogParserState.header
-            else:
-                if state == ScsLogParserState.unknown:
-                    print "Unmatched: %s" % (line)
+                match = re.match(RadPattern.header, line)
+                if match:
+                    if state != ScsLogParserState.unknown:
+                        if event.validate():
+                            event.decode()
+                            eventList.append(event)
+                        else:
+                            error.write(event.printDebug() + '\n')
+                    event = RadLogEvent(match.group(1), match.group(3), match.group(4), match.group(5), match.group(6))
+                    state = ScsLogParserState.header
                 else:
-                    param = line[0:60]
-                    match = re.match("[^0-9a-fA-F ]", param)
-                    if match:
-                        print "Non-hexadecimal data: %s" % (param)
-                        state = ScsLogParserState.unknown
+                    if state == ScsLogParserState.unknown:
+                        error.write("Unmatched: %s\n" % (line))
                     else:
-                        event.appendParam(param)
-                        state = ScsLogParserState.multiline
-        if event != None:
-            if event.validate():
-                event.decode()
-                eventList.append(event)
-            else:
-                event.printDebug()
-
+                        param = line[0:60]
+                        match = re.match("[^0-9a-fA-F ]", param)
+                        if match:
+                            error.write("Non-hexadecimal data: %s\n" % (param))
+                            state = ScsLogParserState.unknown
+                        else:
+                            event.appendParam(param)
+                            state = ScsLogParserState.multiline
+            if event != None:
+                if event.validate():
+                    event.decode()
+                    eventList.append(event)
+                else:
+                    error.write(event.printDebug() + '\n');
     return eventList
 
-def compareTimestamp(obj1, obj2):
-    if obj1._timestamp < obj2._timestamp:
-        return -1
-    elif obj1._timestamp > obj2._timestamp:
-        return 1
-    else:
-        return 0
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog = "foobar",
-                                    description = "")
+    parser = argparse.ArgumentParser(prog = "foobar", description = "")
     parser.add_argument("-s", "--scs_log", required = True, help = "scs_log",
                         dest = "scs_log")
     parser.add_argument("-r", "--rad_log", required = True, help = "rad_log",
@@ -374,22 +328,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print args
 
-    scsEvents = []
-    scsEvents = parse_log(args.scs_log)
-
-    #for event in eventList:
-    #    print event
-
     radEvents = []
     radEvents = parse_rad_log(args.rad_log)
 
-    for event in radEvents:
-        print event.toCsv()
-
-    # merge two events according to the time (year in rad_log is always
-    # incorrect so do not use year, only time)
-    #allEvents = scsEvents + radEvents
-    #allEvents.sort(compareTimestamp)
-
-    #for event in allEvents:
-    #    print event
+    with open('foobar.csv', 'w') as csv:
+        for event in radEvents:
+            csv.write(event.toCsv() + '\n')
