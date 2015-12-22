@@ -370,7 +370,7 @@ def parse_rad_log(infile):
     return eventList
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog = "foobar", description = "")
+    parser = argparse.ArgumentParser(prog = "radiogaga", description = "")
     parser.add_argument("-r", "--rad_log", required = True, help = "rad_log",
                         dest = "rad_log")
     args = parser.parse_args()
