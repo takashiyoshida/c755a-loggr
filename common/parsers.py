@@ -74,7 +74,6 @@ class RadLogEvent:
 
 class RadLogParam:
     def __init__(self):
-<<<<<<< HEAD
         self._bin = ""
         self._data = None
 
@@ -92,22 +91,6 @@ class RadLogParam:
             print e
             print temp
             raise
-=======
-        self._data = []
-
-    def append_byte_stream(self, data):
-        stream = data.strip().split(' ')
-        for byte in stream:
-            try:
-                num = int(byte, 16)
-                if num != None:
-                    self._data.append(num)
-            except ValueError as e:
-                print data
-                print str(e)
-                return False
-        return True
->>>>>>> 117998ba74dce46cda63ebf5f00ef19a7aabea14
 
     def __repr__(self):
         desc = ""
