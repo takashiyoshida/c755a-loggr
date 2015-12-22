@@ -7,10 +7,8 @@ import struct
 from common.patterns import ScsPattern, RadPattern
 
 class ScsLogEvent:
-    def __init__(self, process, env, server, timestamp, text):
-        self._process = process
-        self._env = env
-        self._server = server
+    def __init__(self, origin, timestamp, text):
+        self._origin = origin
         self._timestamp = datetime.strptime(timestamp, "%m/%d/%y %H:%M:%S.%f")
         self._text = text
 
@@ -18,7 +16,7 @@ class ScsLogEvent:
         self._text += text
 
     def __repr__(self):
-        return "ScsLogEvent: %s %s %s %s %s" % (self._process, self._env, self._server, self._timestamp, self._text)
+        return "ScsLogEvent: %s %s %s %s %s" % (self._origin, self._timestamp, self._text)
 
 class ScsLogParserState:
     unknown   = 0
@@ -40,7 +38,7 @@ class ScsLogParser:
                     if state != ScsLogParserState.unknown:
                         eventList.append(event)
 
-                    event = ScsLogEvent(match.group(1), match.group(2), match.group(3), match.group(4), match.group(6))
+                    event = ScsLogEvent(match.group(1), match.group(2), match.group(4))
                     state = ScsLogParserState.header
                 else:
                     if state == ScsLogParserState.unknown:

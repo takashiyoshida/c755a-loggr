@@ -279,7 +279,7 @@ class RadLogEvent:
             print self._data
         except IndexError as e:
             print e
-            print index
+            print flag
             print self._data
         except ValueError as e:
             print e

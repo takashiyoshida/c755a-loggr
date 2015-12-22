@@ -52,3 +52,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+*_parsefailure
+*_log.*
+*.csv
+*.txt
+*.xls*
