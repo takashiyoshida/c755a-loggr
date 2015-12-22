@@ -52,10 +52,6 @@ class ScsPattern:
     #
     # [2] RadComServer@OCCCMS_nelscs1a 11/27/15 02:09:25.551(11/27/15 02:09:25.550) <31893/3915606928> (RadComServer_i:1492)
 
-class FoobarPattern:
-    header = "\[.+\] (%s) (%s)\(.+\) <.+> \(.+\)" % (CommonPattern.origin, CommonPattern.ltimestamp)
-
-
 # Regex pattern for plaintext timetable file
 class TimetablePattern:
     name         = "NOMBRE=(.+)"
