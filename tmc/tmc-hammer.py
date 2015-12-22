@@ -20,7 +20,7 @@ class TmcEvent:
         self._event = event
 
     def __repr__(self):
-        return "TmcEvent: %s %s %s %s %s" % (self._timestamp, self._carNo, self._stopPoint, self._eventTime, self._event)
+        return "%s,%s,%s,%s,%s" % (self._timestamp, self._carNo, self._stopPoint, self._eventTime, self._event)
 
 
 
@@ -54,16 +54,16 @@ if __name__ == "__main__":
     for event in eventList:
         match = re.match(TmcPattern.arrivalControl, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Arrival Control")
         match = re.match(TmcPattern.departureControl, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Departure Control")
         match = re.match(TmcPattern.enterPlatform, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), match.group(4))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Entry %s" % (match.group(4)))
         match = re.match(TmcPattern.exitPlatform, event._text)
         if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), match.group(4))
+            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Exit %s" % (match.group(4)))
         match = re.match(TmcPattern.routeAssign, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, match.group(2), match.group(1), None, "Route Assignment")
