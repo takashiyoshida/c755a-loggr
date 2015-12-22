@@ -74,6 +74,7 @@ class RadLogEvent:
 
 class RadLogParam:
     def __init__(self):
+<<<<<<< HEAD
         self._bin = ""
         self._data = None
 
@@ -91,11 +92,27 @@ class RadLogParam:
             print e
             print temp
             raise
+=======
+        self._data = []
+
+    def append_byte_stream(self, data):
+        stream = data.strip().split(' ')
+        for byte in stream:
+            try:
+                num = int(byte, 16)
+                if num != None:
+                    self._data.append(num)
+            except ValueError as e:
+                print data
+                print str(e)
+                return False
+        return True
+>>>>>>> 117998ba74dce46cda63ebf5f00ef19a7aabea14
 
     def __repr__(self):
         desc = ""
-        for i in range(0, len(self._bin), 60):
-            desc += "%s\n" % (self._bin[i:i + 60])
+        for i in range(0, len(self._data), 20):
+            desc += "%s\n" % (self._data[i:i + 20])
         return desc
 
 
@@ -120,10 +137,22 @@ class RadLogParser:
                     if match:
                         state = ScsLogParserState.header
                     else:
-                        # Sometimes, the line contains binary and header together (though this is somewhat unexpected)
-                        # We see enough instances of this that cause the parsing to fail
-                        print ">>> No match <<< "
-                        print line
+                        match = re.match(RadPattern.binary, line)
+                        if match:
+                            if state == ScsLogParserState.unknown:
+                                error.write("ERROR: Encountered binary data without a header [%d]\n%s\n" % (lineCount, line))
+                            else:
+                                if bin.append_byte_stream(match.group(1).split('  ')[0]):
+                                    state = ScsLogParserState.multiline
+                                else:
+                                    state = ScsLogParserState.unknown
+                                    error.write("ERROR: Unable to parse byte stream [%d]\n%s\n" % (lineCount, line))
+                        else:
+                            error.write("ERROR: Unable to match against any RadPattern [%d]\n%s\n" % (lineCount, line))
+                            state = ScsLogParserState.unknown
 
+                if bin and event:
+                    event.addParam(bin)
+                    eventList.append(event)
 
         return eventList
