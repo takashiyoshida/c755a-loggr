@@ -1,0 +1,170 @@
+# exchange configuration file
+# 31/08/2010
+
+Begexch
+# concentrator name given in the concentrator configuration file
+# used to check if the concentrator is defined in the
+# configuration file
+# used to download the rtu
+Name = LTI_PMSA_0001
+
+
+# server identification number used in the table headers (see SRS section 4.4.2.2)
+#BEGINLISTIDENTRANK
+#Location / Station number    | Server  |Identif| Rank
+#                             | Name            | Number| 
+#Depot CMS                    | CMS1    | 501   | 0
+#Depot CMS                    | CMS2    | 502   | 1
+#DBG SCMS                     | ECS1    | 503   | 2
+#Depot CMS                    | ATS1    | 511   | 3
+#Depot CMS                    | ATS2    | 512   | 4
+#DBG SCMS                     | ECS2    | 513   | 5
+#Depot CMS                    | NED1    | 521   | 6
+#Depot CMS                    | NED2    | 522   | 7
+#Buangkok / Station 14        | BGK1    | 141   | 34
+#                             | BGK2    | 142   | 35
+#Boon Keng / Station 8        | BNK1    | 81    | 22
+#                             | BNK2    | 82    | 23
+#Chinatown / Station 3        | CNT1    | 31    | 12
+#                             | CNT2    | 32    | 13
+#Clarke Quay / Station 4      | CQY1    | 41    | 14
+#                             | CQY2    | 42    | 15
+#Dhoby Ghaut / Station 5      | DBG1    | 51    | 16
+#                             | DBG2    | 52    | 17
+#Farrer Park / Station 7      | FRP1    | 71    | 20
+#                             | FRP2    | 72    | 21
+#Hougang / Station 13         | HGN1    | 131   | 32
+#                             | HGN2    | 132   | 33
+#Kovan / Station 12           | KVN1    | 121   | 30
+#                             | KVN2    | 122   | 31
+#Little India / Station 6     | LTI1    | 61    | 18
+#                             | LTI2    | 62    | 19
+#Outram Park / Station 2      | OTP1    | 21    | 10
+#                             | OTP2    | 22    | 11
+#Punggol / Station 16         | PGL1    | 161   | 38
+#                             | PGL2    | 162   | 39
+#Potong Pasir / Station 9     | PTP1    | 91    | 24
+#                             | PTP2    | 92    | 25
+#Serangoon / Station 11       | SER1    | 111   | 28
+#                             | SER2    | 112   | 29
+#Sengkang / Station 15        | SKG1    | 151   | 36
+#                             | SKG2    | 152   | 37
+#Woodleigh / Station 10       | WLH1    | 101   | 26
+#                             | WLH2    | 102   | 27
+#Harbour Front / Station 1    | HBF1    | 11    | 8
+#                             | HBF2    | 12    | 9
+#ENDLISTIDENTRANK
+# server identification number used in the table headers
+# Cf 4.4.2.2 1202-SRS-99-5173-15187
+Identifier= 503
+
+# rank of SKGSMS-1 in subscription table (see SRS section 6.1.10.2, RTU subscription table index)
+# rank of the concentrator in the RTU tables
+Rank = 2
+
+Port = 1234,1234,
+MaxMsgWithoutAck = 100
+
+# download data
+Download_enable = 0
+Download_file = LTI_RTUA_0011_Downloadfile.txt,LTI_RTUA_0012_Downloadfile.txt,
+# same path given in send.ftp called by send.bat
+# on the configuration PC
+Download_destination = /ata0,/ata0,
+
+# Maximum delay between 2 RTU system table without disconnection ( in sec, dflt = 5s)
+# Optional parameter
+Communication_timeout = 19
+
+# Optional parameter : Type of timer to be used
+#by default : Timer_conf = DacTimer
+#Timer_conf = ScsTimer  (Scadasoft timer, to avoid in RDN mode)
+#Timer_conf = DacTimer
+#Timer_conf = ScsTimer
+
+# System Identification number defined in the doc No 1202-SRS-99-5173-15187 4.4.2.3
+# C755 RTU , C752 SIG, C753 POWER, C760 PIS, C760 CCTV, C760 CLOCK, C760 PA
+#0x00      , 0x10    , 0x20      , 0x30    , 0x40     , 0x50      , 0x60
+# C771 LIFT, C771 ESC, C773 ECS, C774 FIRE, C781A WASH, C755 PLC
+#0x70      , 0x80    , 0x90      , 0xA0    , 0xB0     , 0xF0
+#
+#SWC_0=0x10;             /* SWC No 1: SIG
+#SWC_1=0x20;             /* SWC No 2: POW
+#SWC_2=0x30;             /* SWC No 3: PIS
+#SWC_3=0x40;             /* SWC No 4: CCTV
+#SWC_4=0x50;             /* SWC No 5: CLOCK
+#SWC_5=0x60;             /* SWC No 6: PA
+#SWC_6=0x70;             /* SWC No 7: LIFT1
+#SWC_7=0x71;             /* SWC No 8: LIFT2
+#SWC_8=0x72;             /* SWC No 9: LIFT3
+#SWC_9=0x73;             /* SWC No 10: LIFT4
+#SWC_10=0x74;            /* SWC No 11: LIFT5
+#SWC_10=0x75;            /* SWC No 12: LIFT6
+#SWC_11=0x80;            /* SWC No 13: ESC
+#SWC_12=0x90;            /* SWC No 14: ECS
+#SWC_13=0xA0;            /* SWC No 15: FIRE
+#SWC_13=0xB0;            /* SWC No 16: TWP
+#SWC_14=0xF0;            /* SWC No 17: PLC1
+#SWC_15=0xF1;            /* SWC No 18: PLC2
+#SWC_16=0xF2;            /* SWC No 19: PLC3
+#SWC_17=0xF3;            /* SWC No 20: PLC4
+#SWC_17=0xF4;            /* SWC No 21: PLC5
+
+# Connection to RTU if Standby (0 = no, 1 = yes)
+# default = 1
+Standby_connection = 0
+
+#subscription to POW,  PIS,  CCT,  CLK,  PA,   LIFT1,LIFT2,LIFT3,LIFT4,LIFT5,LIFT6, ESC,  ECS, FIRE, WASH, PLC1, PLC2, PLC3, PLC4, PLC5
+#Subscription = 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x80, 0x90, 0xA0, 0xB0, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4
+Subscription = 0x70,0x71,0x80,0x90,0xA0,
+Subscription_enable = 1
+
+#ReadTable = name of the message, system, tableId, time unit, start, period * base polling period (set as 3 seconds)
+# if time unit == R, the table is managed by a pseudo_variable
+# it is a command the value of  which is the name of the message
+# read the third table of LIFT systems every (10 * 3) minutes
+# at HH:01, HH:11, HH:21 ... for LIFT1
+# at HH:02, HH:12, HH:22 ... for LIFT2
+#ReadTable = msg1, 0x71, 3, M, 1, 10,
+#ReadTable = msg2, 0x72, 3, M, 2, 10,
+#ReadTable = ATC1, 0x10, 3, S, -1, 1,  => is to periodically read the ATC Localisation table 1 from RTU
+#ReadTable = ATC2, 0x10, 23, S, -1, 1, => is to periodically read the ATC Localisation table 2 from RTU (only in Depot)
+
+#read the first table of PLC system every hour from now
+# at HH:MM, HH+1:MM, HH+2:MM ...
+#ReadTable = msg3, 0xB0, 1, M, -1, 60,
+
+# this reading may be asked by a pseudo EOV
+# the type, the value, the length are unused
+# (cf. variable configuration file )
+#ReadTable = ask1, 0x10, 1, R,
+#ReadTable = ask2, 0x00, 1, R,
+#ReadTable = ask3, 0x10, 12, R,
+# read subscription table
+#ReadTable = ask3, 0x00, 7, R,
+
+# Optional parameter
+#ReadTable =
+
+########### position in subscription table ##################
+#NOTSIG=1;SIGDMSGROUP=4;SIGCBIGROUP=8;SIGPSDGROUP=16;SIGATCLOC=32;SIGATCMSG=64
+# Add 1 in order to specify by default online server (to be compliant with RTUA rule
+#SIGALLDATA=1+SIGDMSGROUP+SIGCBIGROUP+SIGPSDGROUP+SIGATCLOC+SIGATCMSG
+#SIGCBIATCMSG=1+SIGCBIGROUP+SIGATCMSG
+#SIGGROUP=1+SIGDMSGROUP+SIGCBIGROUP+SIGPSDGROUP
+#SIGCBIONLY=1+SIGCBIGROUP
+#SIGATCMSGONLY=1+SIGATCMSG
+#SIGATCCBIONLY=1+SUBVAL_SIGCBIGROUP+SUBVAL_SIGATCMSG+SUBVAL_SIGATCLOC
+#############################################################
+
+# systems and RTU tables definition
+#System = name, idf, position in subscription table, liste of 4-uplets :
+# ( tableIdf, datatype, begin@, end@),
+System = RTU, 0x00, 0, 0x01, (3;1;0x0200;0x03FF) (4;4;0x0400;0x05A1) (5;0;0x0600;0x0615) (6;0;0x0700;0x07B2) (7;0;0x0800;0x1450),
+System=LIFT1,0x70,7,0x01,(1;1;0x0000;0x001A),
+System=LIFT2,0x71,8,0x01,(1;1;0x0000;0x001A),
+System=ESC,0x80,13,0x01,(10;4;0x0000;0x0021)(20;4;0x0022;0x008F)(30;6;0x0100;0x014F),
+System=ECS,0x90,14,0x01,(1;5;0x0800;0x0AEB)(2;4;0x0000;0x001D)(3;2;0x0100;0x0277)(4;1;0x0280;0x0329)(5;1;0x0350;0x061F)(6;6;0x1000;0x1015)(7;6;0x1100;0x120E)(10;7;0x1250;0x1267)(8;7;0x1300;0x1469)(9;9;0x1500;0x17E7),
+System=FIRE,0xA0,15,0x01,(1;1;0x0000;0x007D),
+
+Endexch

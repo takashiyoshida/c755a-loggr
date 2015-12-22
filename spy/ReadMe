@@ -1,0 +1,43 @@
+=======================================
+= To compile the application in linux =
+=======================================
+
+Pre-requisite:
+--------------
+
+This application does not involve any third party libraries. 
+It only uses standard C++ libraries. 
+Compilation environment should be installed.
+
+Compilation with g++ version (4.1.2):
+-------------------------------------
+
+1) Copy all the files into a directory
+2) g++ main.cpp Global.cpp -o decoder
+
+
+
+
+=========================================
+= To compile the application in Windows = 
+=========================================
+
+Pre-requisite:
+--------------
+
+This application does not involve any third party libraries. 
+It only uses standard C++ libraries. 
+Compilation environment should be installed.
+
+Compilation with Visual C 10:
+-----------------------------
+
+1) Copy all the files into a directory
+2) Open a Developer Command Prompt window. 
+(On the Start window, open Apps. 
+Open the Visual Studio Tools folder under your version of Visual Studio, 
+and then choose the Developer Command Prompt shortcut.) 
+3) Go to the folder where the files are placed.
+2) cl main.cpp Global.cpp /Fedecoder
+
+
