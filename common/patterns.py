@@ -10,9 +10,11 @@ class CommonPattern:
 
     origin = "%s@%s_%s" % (process, env, server)
 
-    # Date and time format of processes are somewhat inconsistent. Some use single-digit
-    # month, day, hour, minute and second when the value is less than 10.
-
+    # Date and time format across multiple processes are somewhat inconsistent.
+    # Some processes use single digit month, day, hour, minute and second when
+    # the value is less than 10.
+    # TODO: This should actually be fixed in the C++ source code to print
+    # timestamp in a consistent format
     month = "[01]?[0-9]"
     day   = "[0-3]?[0-9]"
     year  = "[0-9]{2}"
@@ -40,10 +42,10 @@ class CommonPattern:
 
 class ScsPattern:
     unusedTimestamp = "\s?\(%s\)" % (CommonPattern.ltimestamp)
-    unknownValue    = "<\d+/\d+>"
-    sourceLine      = "\(.+:\d+\)"
+    # unknownValue    = "<\d+/\d+>"
+    # sourceLine      = "\(.+:\d+\)"
 
-    unusedText      = "(%s)? %s %s" % (unusedTimestamp, unknownValue, sourceLine)
+    unusedText      = "(%s)? %s %s" % (unusedTimestamp, CommonPattern.unknownValue, CommonPattern.sourceLine)
     text            = ".+"
 
     # Typically matches messages like:
