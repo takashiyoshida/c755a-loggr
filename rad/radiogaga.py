@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-from common.parsers import RadLogParser
+from rad.parser import RadLogParser
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog = "radiogaga", description = "")
