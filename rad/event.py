@@ -264,6 +264,30 @@ class RadLogEvent:
                     elif command == 0x2a:
                         # PIS command received
                         self._note = "Status 5: %d" % (self._data[flag + 6])
+                    elif command == 0x33:
+                        # PEC answer
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x34:
+                        # PEC reset
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x35:
+                        # PEC activated
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x36:
+                        # PEC selected by driver
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x37:
+                        # PEC command received
+                        self._note = "PEC number: %d, Status 6: %d" % (self._data[flag + 6], self._data[flag + 7])
+                    elif command == 0x38:
+                        # Ready for PEC conversation
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x39:
+                        # Request for PEC reset
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                    elif command == 0x3a:
+                        # PEC continue
+                        self._note = "PEC number: %d" % (self._data[flag + 6])
                     else:
                         self._note = ""
 
@@ -279,7 +303,8 @@ class RadLogEvent:
             print self._data
 
     def toCsv(self):
-        return "%s,Car %d,ID (%d),%d,%s,%s,%s,%s,%s" % (self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._message, self._note)
+        #return "%s,Car %d,ID (%d),%d,%s,%s,%s,%s,%s" % (self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._message, self._note)
+        return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id,), self._api_label, self._message, self._note]
 
     def printDebug(self):
         return "RadLogEvent: %s %d %d %s %s %s\n%s" % (self._timestamp, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._get_param_block())
