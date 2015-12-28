@@ -5,7 +5,6 @@ from pprint import pprint
 import struct
 
 class RadLogEvent:
-
     METHOD_ATTACH_SESSION = 0x02
     EVENT_ATTACH_SESSION = 0x8002
     METHOD_DETACH_SESSION = 0x03
@@ -361,7 +360,7 @@ class RadLogEvent:
         self._data = () # tuple of bytes converted from self._param
         self._atc_car_num = 0
         self._message = None
-        self._note = None
+        self._parameter = None
 
     def append_param(self, param):
         # Add extra space at the beginning so that we can add '\x' when
@@ -374,83 +373,83 @@ class RadLogEvent:
     def decode(self):
         try:
             if self._api_id == RadLogEvent.METHOD_SEND_SDS:
-                flag = 44
+                offset = 44
             elif self._api_id == RadLogEvent.EVENT_INCOMING_SDS:
-                flag = 76
+                offset = 76
             else:
-                flag = -1
+                offset = -1
 
-            if flag != -1:
+            if offset != -1:
                 #self.printDebug()
-                if self._data[flag] == 0x7:
-                    command = self._data[flag + 1]
+                if self._data[offset] == 0x7:
+                    command = self._data[offset + 1]
                     self._message = self._command_identifiers[command]
-                    self._get_atc_car_num(flag)
+                    self._get_atc_car_num(offset)
 
                     if command == RadLogEvent.PA_LIVE_ANNOUNCEMENT:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 7])
                     elif command == RadLogEvent.PA_PRE_RECORDED_ANNOUCEMENT:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 11])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 11])
                     elif command == RadLogEvent.PA_DVA_ANNOUCEMENT:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 7])
                     elif command == RadLogEvent.PA_RESET:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_CONTINUE:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_COMMAND_RECEIVED:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 11])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 11])
                     elif command == RadLogEvent.PA_READY_FOR_LIVE_DVA_ANNOUCEMENT:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_REQUEST_FOR_PA_RESET:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 6])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_TRAIN_PA_MESSAGE_COMPLETED:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 7])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 7])
                     elif command == RadLogEvent.PA_ATAS_CYCLIC_ANNOUNCEMENT:
-                        self._note = "Announcement ID: %d" % (self._data[flag + 15])
+                        self._parameter = "Announcement ID: %d" % (self._data[offset + 15])
                     elif command == RadLogEvent.PIS_FREE_TEXT_MESSAGE:
-                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                        self._parameter = "PID Address: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PIS_PRE_STORED_MESSAGE:
-                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                        self._parameter = "PID Address: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PIS_LIBRARY_UPLOAD:
-                        self._note = "Status 9: %d" % (self._data[flag + 6])
+                        self._parameter = "Status 9: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PIS_RESET_EMERGENCY_MESSAGE:
-                        self._note = "PID Address: %d" % (self._data[flag + 6])
+                        self._parameter = "PID Address: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PIS_END_OF_PIS_DOWNLOAD:
-                        self._note = "Status 10: %d" % (self._data[flag + 6])
+                        self._parameter = "Status 10: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PIS_COMMAND_RECEIVED:
-                        self._note = "Status 5: %d" % (self._data[flag + 6])
+                        self._parameter = "Status 5: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_ANSWER:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_RESET:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_ACTIVATED:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_SELECTED_BY_DRIVER:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_COMMAND_RECEIVED:
-                        self._note = "PEC number: %d, Status 6: %d" % (self._data[flag + 6], self._data[flag + 7])
+                        self._parameter = "PEC number: %d, Status 6: %d" % (self._data[offset + 6], self._data[offset + 7])
                     elif command == RadLogEvent.PEC_READY_FOR_PEC_CONVERSATION:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_REQUEST_FOR_PEC_RESET:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_CONTINUE:
-                        self._note = "PEC number: %d" % (self._data[flag + 6])
+                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
                     else:
-                        self._note = ""
+                        self._parameter = ""
 
         except KeyError as e:
             print e
             print self._data
         except IndexError as e:
             print e
-            print flag
+            print offset
             print self._data
         except ValueError as e:
             print e
             print self._data
 
     def toCsv(self):
-        return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id,), self._api_label, self._message, self._note]
+        return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id,), self._api_label, self._message, self._parameter]
 
     def printDebug(self):
         return "RadLogEvent: %s %d %d %s %s %s\n%s" % (self._timestamp, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._get_param_block())

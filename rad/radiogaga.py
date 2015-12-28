@@ -17,6 +17,8 @@ if __name__ == "__main__":
     radEvents = logParser.parse_log(args.rad_log)
 
     with open(args.output, 'w') as f:
+        fieldnames = ['Timestamp', 'ATC Car No.', 'Transmission ID', 'Status', 'Method/Event', 'Method/Event ID', 'Method/Event Name', 'Message', 'Parameter']
         writer = csv.writer(f)
+        writer.writerow(fieldnames)
         for event in radEvents:
             writer.writerow(event.toCsv())
