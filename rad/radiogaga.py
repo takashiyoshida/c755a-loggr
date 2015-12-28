@@ -10,7 +10,7 @@ if __name__ == "__main__":
                         dest = "rad_log")
     parser.add_argument("-o", "--output", required = True, help = "output", dest = "output")
     args = parser.parse_args()
-    print args
+    #print args
 
     radEvents = []
     logParser = RadLogParser()

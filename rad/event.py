@@ -312,43 +312,30 @@ class RadLogEvent:
                     elif command == RadLogEvent.PIS_FREE_TEXT_MESSAGE:
                         self._note = "PID Address: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PIS_PRE_STORED_MESSAGE:
-                        # PIS pre-stored message
                         self._note = "PID Address: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PIS_LIBRARY_UPLOAD:
-                        # PIS library upload
                         self._note = "Status 9: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PIS_RESET_EMERGENCY_MESSAGE:
-                        # Reset emergency message
                         self._note = "PID Address: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PIS_END_OF_PIS_DOWNLOAD:
-                        # End of PIS download
                         self._note = "Status 10: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PIS_COMMAND_RECEIVED:
-                        # PIS command received
                         self._note = "Status 5: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_ANSWER:
-                        # PEC answer
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_RESET:
-                        # PEC reset
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_ACTIVATED:
-                        # PEC activated
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_SELECTED_BY_DRIVER:
-                        # PEC selected by driver
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_COMMAND_RECEIVED:
-                        # PEC command received
                         self._note = "PEC number: %d, Status 6: %d" % (self._data[flag + 6], self._data[flag + 7])
                     elif command == RadLogEvent.PEC_READY_FOR_PEC_CONVERSATION:
-                        # Ready for PEC conversation
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_REQUEST_FOR_PEC_RESET:
-                        # Request for PEC reset
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     elif command == RadLogEvent.PEC_CONTINUE:
-                        # PEC continue
                         self._note = "PEC number: %d" % (self._data[flag + 6])
                     else:
                         self._note = ""
@@ -365,7 +352,6 @@ class RadLogEvent:
             print self._data
 
     def toCsv(self):
-        #return "%s,Car %d,ID (%d),%d,%s,%s,%s,%s,%s" % (self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._message, self._note)
         return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id,), self._api_label, self._message, self._note]
 
     def printDebug(self):
