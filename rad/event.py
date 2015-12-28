@@ -5,99 +5,197 @@ from pprint import pprint
 import struct
 
 class RadLogEvent:
+
+    METHOD_ATTACH_SESSION = 0x02
+    EVENT_ATTACH_SESSION = 0x8002
+    METHOD_DETACH_SESSION = 0x03
+    EVENT_DETACH_SESSION = 0x8003
+    METHOD_REQUEST_VERSION = 0x04
+    EVENT_REQUEST_VERSION = 0x8004
+    METHOD_INITIALIZE = 0x05
+    EVENT_INITIALIZE = 0x8005
+    METHOD_SYSTEM_ERROR_THRESHOLD = 0x06
+    EVENT_SYSTEM_ERROR_THRESHOLD = 0x8006
+    METHOD_LOGIN = 0x07
+    EVENT_LOGIN = 0x8007
+    METHOD_LOGOUT = 0x08
+    EVENT_LOGOUT = 0x8008
+    METHOD_CHANGE_PASSWORD = 0x09
+    EVENT_CHANGE_PASSWORD = 0x8009
+    METHOD_QUERY_REFERENCE = 0x0a
+    EVENT_QUERY_REFERENCE = 0x800a
+    METHOD_CHANGE_REFERENCE = 0x0b
+    EVENT_CHANGE_REFERENCE = 0x800b
+    METHOD_SEARCH_SUBSCRIBER = 0x0c
+    EVENT_SEARCH_SUBSCRIBER = 0x800c
+    METHOD_NEW_REFERENCE = 0x0d
+    EVENT_NEW_REFERENCE = 0x800d
+    METHOD_TEXT2SR = 0x0e
+    EVENT_TEXT2SR = 0x800e
+    METHOD_DELETE_REFERENCE = 0x0f
+    EVENT_DELETE_REFERENCE = 0x800f
+
+    METHOD_DELETE_SUBSCRIBER = 0x10
+    EVENT_DELETE_SUBSCRIBER = 0x8010
+    METHOD_SELECT = 0x11
+    EVENT_SELECT = 0x8011
+    METHOD_DESELECT = 0x12
+    EVENT_DESELECT = 0x8012
+    METHOD_DEMAND_TX = 0x13
+    EVENT_DEMAND_TX = 0x8013
+    METHOD_CEASE_TX = 0x14
+    EVENT_CEASE_TX = 0x8014
+    METHOD_SETUP_CALL = 0x15
+    EVENT_SETUP_CALL = 0x8015
+    METHOD_ANSWER_CALL = 0x16
+    EVENT_ANSWER_CALL = 0x8016
+    METHOD_DISCONNECT = 0x17
+    EVENT_DISCONNECT = 0x8017
+    METHOD_SEND_SDS = 0x18
+    EVENT_SEND_SDS = 0x8018
+    METHOD_ATTACH_AUDIO = 0x19
+    EVENT_ATTACH_AUDIO = 0x8019
+    METHOD_DETACH_AUDIO = 0x1a
+    EVENT_DETACH_AUDIO = 0x801a
+    METHOD_MONITOR_SUBSCRIBER = 0x1b
+    EVENT_MONITOR_SUBSCRIBER = 0x801b
+    METHOD_FORCE_CALL_TERMINATION = 0x1c
+    EVENT_FORCE_CALL_TERMINATION = 0x801c
+    METHOD_MONITOR_CALL = 0x1d
+    EVENT_MONITOR_CALL = 0x801d
+
+    METHOD_INCLUDE = 0x20
+    EVENT_INCLUDE = 0x8020
+    METHOD_AUTHORIZE_CALL = 0x21
+    EVENT_AUTHORIZE_CALL = 0x8021
+    METHOD_GET_GROUP_DETAILS = 0x23
+    EVENT_GET_GROUP_DETAILS = 0x8023
+    METHOD_CONVERT_TO_DB_TIME = 0x26
+    EVENT_CONVERT_TO_DB_TIME = 0x8026
+    METHOD_ATTACH_TO_GROUP = 0x27
+    EVENT_ATTACH_TO_GROUP = 0x8027
+    METHOD_DETACH_FROM_GROUP = 0x28
+    EVENT_DETACH_FROM_GROUP = 0x8028
+    METHOD_SEND_CIRCUIT_DATA = 0x29
+    EVENT_SEND_CIRCUIT_DATA = 0x8029
+
+    METHOD_TEXT_TO_REFERENCE = 0x30
+    EVENT_TEXT_TO_REFERENCE = 0x8030
+    METHOD_ATTACH_MONITOR_AUDIO = 0x32
+    EVENT_ATTACH_MONITOR_AUDIO = 0x8032
+    METHOD_JOIN = 0x33
+    EVENT_JOIN = 0x8033
+    METHOD_DETACH_MONITOR_AUDIO = 0x34
+    EVENT_DETACH_MONITOR_AUDIO = 0x8034
+    METHOD_GET_ACTIVE_ALARM_LIST = 0x65
+    EVENT_GET_ACTIVE_ALARM_LIST = 0x8065
+
+    EVENT_SYSTEM_ERROR = 0xa000
+    EVENT_INCOMING_CALL = 0xa001
+    EVENT_INCOMING_SDS = 0xa002
+    EVENT_CALL_STATUS = 0xa003
+    EVENT_SUBSCRIBER_ACTIVITY = 0xa004
+    EVENT_INCOMING_CIRCUIT_DATA = 0xa005
+    EVENT_CIRCUIT_DATA_CAPACITY = 0xa006
+    EVENT_REQUEST_AUTHORIZE_CALL = 0xa009
+    EVENT_GROUP_CALL_ACK = 0xa00a
+    EVENT_DGNA_CREATED = 0xa00e
+    EVENT_DGNA_DELETED = 0xa00f
+    EVENT_SC_ACTIVE_ALARM = 0x8343
+
     _api_identifiers = {
-        0x2: "Attach Session",
-        0x8002: "Attach Session",
-        0x3: "Detach Session",
-        0x8003: "Detach Session",
-        0x4: "Request Version",
-        0x8004: "Request Version",
-        0x5: "Initialize",
-        0x8005: "Initialize",
-        0x6: "Set System Error Threshold",
-        0x8006: "Set System Error Threshold",
-        0x7: "Login",
-        0x8007: "Login",
-        0x8: "Logout",
-        0x8008: "Logout",
-        0x9: "Change Password",
-        0x8009: "Change Password",
-        0xa: "Query Reference",
-        0x800a: "Query Reference",
-        0xb: "Change Reference",
-        0x800b: "Change Reference",
-        0xc: "Search Subscriber",
-        0x800c: "Search Subscriber",
-        0xd: "New Reference",
-        0x800d: "New Reference",
-        0xe: "Text2SR",
-        0x800e: "Text2SR",
-        0xf: "Delete Reference",
-        0x800f: "Delete Reference",
-        0x10: "Delete Subscriber",
-        0x8010: "Delete Subscriber",
-        0x11: "Select",
-        0x8011: "Select",
-        0x12: "Deselect",
-        0x8012: "Deselect",
-        0x13: "Demand TX",
-        0x8013: "Demand TX",
-        0x14: "Cease TX",
-        0x8014: "Cease TX",
-        0x15: "Setup Call",
-        0x8015: "Setup Call",
-        0x16: "Answer Call",
-        0x8016: "Answer Call",
-        0x17: "Disconnect",
-        0x8017: "Disconnect",
-        0x18: "Send SDS",
-        0x8018: "Send SDS",
-        0x19: "Attach Audio",
-        0x8019: "Attach Audio",
-        0x1a: "Detach Audio",
-        0x801a: "Detach Audio",
-        0x1b: "Monitor Subscriber",
-        0x801b: "Monitor Subscriber",
-        0x1c: "Force Call Termination",
-        0x801c: "Force Call Termination",
-        0x1d: "Monitor Call",
-        0x801d: "Monitor Call",
-        0x20: "Include",
-        0x8020: "Include",
-        0x21: "Authorize Call",
-        0x8021: "Authorize Call",
-        0x23: "Get Group Details",
-        0x8023: "Get Group Details",
-        0x26: "Convert to DB Time",
-        0x8026: "Convert to DB Time",
-        0x27: "Attach to Group",
-        0x8027: "Attach to Group",
-        0x28: "Detach from Group",
-        0x8028: "Detach from Group",
-        0x29: "Send Circuit Data",
-        0x8029: "Send Circuit Data",
-        0x30: "Text to Reference",
-        0x8030: "Text to Reference",
-        0x32: "Attach Monitor Audio",
-        0x8032: "Attach Monitor Audio",
-        0x33: "Join",
-        0x8033: "Join",
-        0x34: "Detach Monitor Audio",
-        0x8034: "Detach Monitor Audio",
-        0x65: "Get Active Alarm List",
-        0x8065: "Get Active Alarm List",
-        0xa000: "System Error",
-        0xa001: "Incoming Call",
-        0xa002: "Incoming SDS",
-        0xa003: "Call Status",
-        0xa004: "Subscriber Activity",
-        0xa005: "Incoming Circuit Data",
-        0xa006: "Circuit Data Capacity",
-        0xa009: "Request Authorize Call",
-        0xa00a: "Group Call Ack",
-        0xa00e: "DGNA Created",
-        0xa00f: "DGNA Deleted",
-        0x8343: "SC Active Alarm",
+        METHOD_ATTACH_SESSION: "Attach Session",
+        EVENT_ATTACH_SESSION: "Attach Session",
+        METHOD_DETACH_SESSION: "Detach Session",
+        EVENT_DETACH_SESSION: "Detach Session",
+        METHOD_REQUEST_VERSION: "Request Version",
+        EVENT_REQUEST_VERSION: "Request Version",
+        METHOD_INITIALIZE: "Initialize",
+        EVENT_INITIALIZE: "Initialize",
+        METHOD_SYSTEM_ERROR_THRESHOLD: "Set System Error Threshold",
+        EVENT_SYSTEM_ERROR_THRESHOLD: "Set System Error Threshold",
+        METHOD_LOGIN: "Login",
+        EVENT_LOGIN: "Login",
+        METHOD_LOGOUT: "Logout",
+        EVENT_LOGOUT: "Logout",
+        METHOD_CHANGE_PASSWORD: "Change Password",
+        EVENT_CHANGE_PASSWORD: "Change Password",
+        METHOD_QUERY_REFERENCE: "Query Reference",
+        EVENT_QUERY_REFERENCE: "Query Reference",
+        METHOD_CHANGE_REFERENCE: "Change Reference",
+        EVENT_CHANGE_REFERENCE: "Change Reference",
+        METHOD_SEARCH_SUBSCRIBER: "Search Subscriber",
+        EVENT_SEARCH_SUBSCRIBER: "Search Subscriber",
+        METHOD_NEW_REFERENCE: "New Reference",
+        EVENT_NEW_REFERENCE: "New Reference",
+        METHOD_TEXT2SR: "Text2SR",
+        EVENT_TEXT2SR: "Text2SR",
+        METHOD_DELETE_REFERENCE: "Delete Reference",
+        EVENT_DELETE_REFERENCE: "Delete Reference",
+        METHOD_DELETE_SUBSCRIBER: "Delete Subscriber",
+        EVENT_DELETE_SUBSCRIBER: "Delete Subscriber",
+        METHOD_SELECT: "Select",
+        EVENT_SELECT: "Select",
+        METHOD_DESELECT: "Deselect",
+        EVENT_DESELECT: "Deselect",
+        METHOD_DEMAND_TX: "Demand TX",
+        EVENT_DEMAND_TX: "Demand TX",
+        METHOD_CEASE_TX: "Cease TX",
+        EVENT_CEASE_TX: "Cease TX",
+        METHOD_SETUP_CALL: "Setup Call",
+        EVENT_SETUP_CALL: "Setup Call",
+        METHOD_ANSWER_CALL: "Answer Call",
+        EVENT_ANSWER_CALL: "Answer Call",
+        METHOD_DISCONNECT: "Disconnect",
+        EVENT_DISCONNECT: "Disconnect",
+        METHOD_SEND_SDS: "Send SDS",
+        EVENT_SEND_SDS: "Send SDS",
+        METHOD_ATTACH_AUDIO: "Attach Audio",
+        EVENT_ATTACH_AUDIO: "Attach Audio",
+        METHOD_DETACH_AUDIO: "Detach Audio",
+        EVENT_DETACH_AUDIO: "Detach Audio",
+        METHOD_MONITOR_SUBSCRIBER: "Monitor Subscriber",
+        EVENT_MONITOR_SUBSCRIBER: "Monitor Subscriber",
+        METHOD_FORCE_CALL_TERMINATION: "Force Call Termination",
+        EVENT_FORCE_CALL_TERMINATION: "Force Call Termination",
+        METHOD_MONITOR_CALL: "Monitor Call",
+        EVENT_MONITOR_CALL: "Monitor Call",
+        METHOD_INCLUDE: "Include",
+        EVENT_INCLUDE: "Include",
+        METHOD_AUTHORIZE_CALL: "Authorize Call",
+        EVENT_AUTHORIZE_CALL: "Authorize Call",
+        METHOD_GET_GROUP_DETAILS: "Get Group Details",
+        EVENT_GET_GROUP_DETAILS: "Get Group Details",
+        METHOD_CONVERT_TO_DB_TIME: "Convert to DB Time",
+        EVENT_CONVERT_TO_DB_TIME: "Convert to DB Time",
+        METHOD_ATTACH_TO_GROUP: "Attach to Group",
+        EVENT_ATTACH_TO_GROUP: "Attach to Group",
+        METHOD_DETACH_FROM_GROUP: "Detach from Group",
+        EVENT_DETACH_FROM_GROUP: "Detach from Group",
+        METHOD_SEND_CIRCUIT_DATA: "Send Circuit Data",
+        EVENT_SEND_CIRCUIT_DATA: "Send Circuit Data",
+        METHOD_TEXT_TO_REFERENCE: "Text to Reference",
+        EVENT_TEXT_TO_REFERENCE: "Text to Reference",
+        METHOD_ATTACH_MONITOR_AUDIO: "Attach Monitor Audio",
+        EVENT_ATTACH_MONITOR_AUDIO: "Attach Monitor Audio",
+        METHOD_JOIN: "Join",
+        EVENT_JOIN: "Join",
+        METHOD_DETACH_MONITOR_AUDIO: "Detach Monitor Audio",
+        EVENT_DETACH_MONITOR_AUDIO: "Detach Monitor Audio",
+        METHOD_GET_ACTIVE_ALARM_LIST: "Get Active Alarm List",
+        EVENT_GET_ACTIVE_ALARM_LIST: "Get Active Alarm List",
+        EVENT_SYSTEM_ERROR: "System Error",
+        EVENT_INCOMING_CALL: "Incoming Call",
+        EVENT_INCOMING_SDS: "Incoming SDS",
+        EVENT_CALL_STATUS: "Call Status",
+        EVENT_SUBSCRIBER_ACTIVITY: "Subscriber Activity",
+        EVENT_INCOMING_CIRCUIT_DATA: "Incoming Circuit Data",
+        EVENT_CIRCUIT_DATA_CAPACITY: "Circuit Data Capacity",
+        EVENT_REQUEST_AUTHORIZE_CALL: "Request Authorize Call",
+        EVENT_GROUP_CALL_ACK: "Group Call Ack",
+        EVENT_DGNA_CREATED: "DGNA Created",
+        EVENT_DGNA_DELETED: "DGNA Deleted",
+        EVENT_SC_ACTIVE_ALARM: "SC Active Alarm",
     }
 
     CCTV_CARRIER_ON = 0x01
@@ -275,9 +373,9 @@ class RadLogEvent:
 
     def decode(self):
         try:
-            if self._api_id == 0x18: # Send SDS method
+            if self._api_id == RadLogEvent.METHOD_SEND_SDS:
                 flag = 44
-            elif self._api_id == 0xa002: # Incoming SDS event
+            elif self._api_id == RadLogEvent.EVENT_INCOMING_SDS:
                 flag = 76
             else:
                 flag = -1
