@@ -437,6 +437,8 @@ class RadLogEvent:
                     else:
                         self._parameter = ""
 
+                self._get_atc_car_num(offset)
+
         except KeyError as e:
             print e
             print self._data
@@ -449,7 +451,7 @@ class RadLogEvent:
             print self._data
 
     def toCsv(self):
-        return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id,), self._api_label, self._message, self._parameter]
+        return [self._timestamp, self._atc_car_num, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._message, self._parameter]
 
     def printDebug(self):
         return "RadLogEvent: %s %d %d %s %s %s\n%s" % (self._timestamp, self._trans_id, self._status, self._api_type, hex(self._api_id), self._api_label, self._get_param_block())
@@ -479,7 +481,7 @@ class RadLogEvent:
         return False
 
     def _get_atc_car_num(self, index):
-        self._get_atc_car_num = (self._data[index + 2] << 8 | self._data[index + 3])
+        self._atc_car_num = (self._data[index + 2] << 8 | self._data[index + 3])
 
     def _get_param_block(self):
         block = ""
