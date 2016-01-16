@@ -419,21 +419,37 @@ class RadLogEvent:
                     elif command == RadLogEvent.PIS_COMMAND_RECEIVED:
                         self._parameter = "Status 5: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PEC_ANSWER:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_RESET:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_ACTIVATED:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_SELECTED_BY_DRIVER:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_COMMAND_RECEIVED:
-                        self._parameter = "PEC number: %d, Status 6: %d" % (self._data[offset + 6], self._data[offset + 7])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d, Status 6: %d" % (carNum, pecNum, self._data[offset + 7])
                     elif command == RadLogEvent.PEC_READY_FOR_PEC_CONVERSATION:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_REQUEST_FOR_PEC_RESET:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     elif command == RadLogEvent.PEC_CONTINUE:
-                        self._parameter = "PEC number: %d" % (self._data[offset + 6])
+                        carNum = self._decodeCarNumFromPec(self._data[offset + 6])
+                        pecNum = self._decodePecNumFromPec(self._data[offset + 6])
+                        self._parameter = "Car: %d, PEC: %d" % (carNum, pecNum)
                     else:
                         self._parameter = ""
 
@@ -482,6 +498,12 @@ class RadLogEvent:
 
     def _get_atc_car_num(self, index):
         self._atc_car_num = (self._data[index + 2] << 8 | self._data[index + 3])
+        
+    def _decodeCarNumFromPec(self, pec):
+        return ((pec >> 4) & 0xf)
+        
+    def _decodePecNumFromPec(self, pec):
+        return (pec & 0xf)
 
     def _get_param_block(self):
         block = ""
