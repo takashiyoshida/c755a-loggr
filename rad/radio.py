@@ -323,7 +323,7 @@ def keep_headers_if_before(text, headers):
     before = before - timedelta(hours=8)
     before = before.replace(tzinfo=pytz.utc)
 
-    logging.debug("Keep headers if before this date: %s" % before)
+    logging.info("Keep headers if before this date: %s" % before)
     return filter(lambda h: h.timestamp() < before, headers)
 
 
