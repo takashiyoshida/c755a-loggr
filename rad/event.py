@@ -207,15 +207,15 @@ class RadLogEvent:
     CCTV_FREQUENCY_CHANGE = 0x08
 
     PA_LIVE_ANNOUNCEMENT = 0x0b
-    PA_PRE_RECORDED_ANNOUCEMENT = 0x0c
-    PA_DVA_ANNOUCEMENT = 0x0d
+    PA_PRE_RECORDED_ANNOUNCEMENT = 0x0c
+    PA_DVA_ANNOUNCEMENT = 0x0d
     PA_RESET = 0x0e
     PA_REQUEST_ATAS_VERSION = 0x0f
     PA_ATAS_LIBRARY_ENABLE = 0x10
     PA_ATAS_LIBRARY_DISABLE = 0x11
     PA_CONTINUE = 0x12
     PA_COMMAND_RECEIVED = 0x13
-    PA_READY_FOR_LIVE_DVA_ANNOUCEMENT = 0x14
+    PA_READY_FOR_LIVE_DVA_ANNOUNCEMENT = 0x14
     PA_ATAS_VERSION_NUMBER = 0x15
     PA_REQUEST_FOR_PA_RESET = 0x16
     PA_AUDIO_SWITCH_ON_PA = 0x17
@@ -280,20 +280,20 @@ class RadLogEvent:
         CCTV_FREQUENCY_CHANGE: "Frequency Change",
         # Public Announcement
         PA_LIVE_ANNOUNCEMENT: "PA Live Announcement",
-        PA_PRE_RECORDED_ANNOUCEMENT: "Pre-recorded Annoucement",
-        PA_DVA_ANNOUCEMENT: "DVA Announcement",
+        PA_PRE_RECORDED_ANNOUNCEMENT: "Pre-recorded Announcement",
+        PA_DVA_ANNOUNCEMENT: "DVA Announcement",
         PA_RESET: "PA Reset",
         PA_REQUEST_ATAS_VERSION: "Request for ATAS Version",
         PA_ATAS_LIBRARY_ENABLE: "ATAS Library Enable (1)",
         PA_ATAS_LIBRARY_DISABLE: "ATAS Library Disable (1)",
         PA_CONTINUE: "PA Continue",
         PA_COMMAND_RECEIVED: "PA Command Received",
-        PA_READY_FOR_LIVE_DVA_ANNOUCEMENT: "Ready for Live or DVA Annoucement",
+        PA_READY_FOR_LIVE_DVA_ANNOUNCEMENT: "Ready for Live or DVA Announcement",
         PA_ATAS_VERSION_NUMBER: "ATAS Version Number",
         PA_REQUEST_FOR_PA_RESET: "Request for PA Reset",
         PA_AUDIO_SWITCH_ON_PA: "Audio Switch on PA",
         PA_TRAIN_PA_MESSAGE_COMPLETED: "Train PA Message Completed",
-        PA_ATAS_CYCLIC_ANNOUNCEMENT: "ATAS Cyclic Annoucement",
+        PA_ATAS_CYCLIC_ANNOUNCEMENT: "ATAS Cyclic Announcement",
         PA_AUDIO_SWITCH_ON_CAB_TO_CAB: "Audio SW on Cab to Cab",
         # Passenger Infomration System
         PIS_FREE_TEXT_MESSAGE: "PIS Free-Text Message",
@@ -388,9 +388,9 @@ class RadLogEvent:
 
                     if command == RadLogEvent.PA_LIVE_ANNOUNCEMENT:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 7])
-                    elif command == RadLogEvent.PA_PRE_RECORDED_ANNOUCEMENT:
+                    elif command == RadLogEvent.PA_PRE_RECORDED_ANNOUNCEMENT:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 11])
-                    elif command == RadLogEvent.PA_DVA_ANNOUCEMENT:
+                    elif command == RadLogEvent.PA_DVA_ANNOUNCEMENT:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 7])
                     elif command == RadLogEvent.PA_RESET:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
@@ -398,7 +398,7 @@ class RadLogEvent:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_COMMAND_RECEIVED:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 11])
-                    elif command == RadLogEvent.PA_READY_FOR_LIVE_DVA_ANNOUCEMENT:
+                    elif command == RadLogEvent.PA_READY_FOR_LIVE_DVA_ANNOUNCEMENT:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
                     elif command == RadLogEvent.PA_REQUEST_FOR_PA_RESET:
                         self._parameter = "Announcement ID: %d" % (self._data[offset + 6])
