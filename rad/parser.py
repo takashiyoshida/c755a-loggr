@@ -31,7 +31,7 @@ class RadLogParser:
                                 eventList.append(event)
                             else:
                                 error.write("Parse error at Line %d\n" % (lineCount))
-                                error.write(event.printDebug() + '\n')
+                                #error.write(event.printDebug() + '\n')
                         event = RadLogEvent(match.group(1), match.group(3), match.group(4), match.group(5), match.group(6), now)
                         state = ScsLogParserState.header
                     else:
@@ -54,5 +54,5 @@ class RadLogParser:
                     eventList.append(event)
                 else:
                     error.write("Parse error at line %d\n" % (lineCount))
-                    error.write(event.printDebug() + '\n')
+                    #error.write(event.printDebug() + '\n')
         return eventList
