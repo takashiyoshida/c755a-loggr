@@ -53,6 +53,7 @@ docs/_build/
 # PyBuilder
 target/
 
+.DS_Store
 *_parsefailure
 *_log.*
 *.csv
