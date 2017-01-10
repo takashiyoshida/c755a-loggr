@@ -310,7 +310,7 @@ def process_tcp_logs(logs):
     headers = sorted(headers, key=lambda header: header._timestamp)
     return headers
 
-def keep_headers_if_after(text, headers):
+def keep_headers_after(text, headers):
     after = datetime.strptime(text, "%Y/%m/%d %H:%M:%S")
     after = after - timedelta(hours=8)
     after = after.replace(tzinfo=pytz.utc)
@@ -318,7 +318,7 @@ def keep_headers_if_after(text, headers):
     logging.info("Keep headers after this date: %s" % after)
     return filter(lambda h: h.timestamp() > after, headers)
 
-def keep_headers_if_before(text, headers):
+def keep_headers_before(text, headers):
     before = datetime.strptime(text, "%Y/%m/%d %H:%M:%S")
     before = before - timedelta(hours=8)
     before = before.replace(tzinfo=pytz.utc)
@@ -369,50 +369,43 @@ def dump_double_headers(outfile, rad_headers, tcp_headers):
 """
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(prog='radio.py')
-    argparser.add_argument('-r', '--rad', nargs='+', required=False, help='rad_log', dest='rad_logs')
-    argparser.add_argument('-y', '--year', type=int, required=False, help='year', dest='year')
-    argparser.add_argument('-t', '--tcp', nargs='+', required=False, help='tcp_log', dest='tcp_logs')
-    argparser.add_argument('-o', '--output', required=False, help='output', dest='output')
-    argparser.add_argument('-a', '--after', required=False, help='YYYY/mm/dd HH:MM:SS in SGT timezone', dest='after')
-    argparser.add_argument('-b', '--before', required=False, help='YYYY/mm/dd HH:MM:SS in SGT timezone', dest='before')
+    argparser.add_argument('-r', '--rad', nargs='+', required=False,
+                           help='path to rad_log', dest='rad_logs')
+    argparser.add_argument('-y', '--year', type=int, required=False,
+                           help='year', dest='year')
+    argparser.add_argument('-t', '--tcp', nargs='+', required=False,
+                           help='path to tcp_log', dest='tcp_logs')
+    argparser.add_argument('-o', '--output', required=False,
+                           help='write output to CSV file', dest='output')
+    argparser.add_argument('-a', '--after', required=False,
+                           help='keep data from YYYY/mm/dd HH:MM:SS in SGT timezone',
+                           dest='after')
+    argparser.add_argument('-b', '--before', required=False,
+                           help='keep data from YYYY/mm/dd HH:MM:SS in SGT timezone',
+                           dest='before')
     argparser.add_argument('-c', '--compare', action='store_true', required=False, help='compare rad_log and tcp server log', dest='compare')
 
     args = argparser.parse_args()
-
     logging_init()
-    logging.info("Started")
-
     if args.rad_logs:
         if args.year == None:
             logging.warning("'year' not specified in the parameter; using %d" % datetime.now().year)
         rad_headers = process_rad_logs(args.rad_logs, args.year)
         logging.info("No. of headers extracted from rad_log: %d", len(rad_headers))
-
-        if args.before:
-            rad_headers = keep_headers_if_before(args.before, rad_headers)
-            logging.info("No. of headers extracted from rad_log: %d", len(rad_headers))
-
-        if args.after:
-            rad_headers = keep_headers_if_after(args.after, rad_headers)
-            logging.info("No. of headers extracted from rad_log: %d", len(rad_headers))
-
-        if args.output:
-            dump_headers(args.output, rad_headers)
     if args.tcp_logs:
         tcp_headers = process_tcp_logs(args.tcp_logs)
         logging.info("No. of headers extracted from tcp log: %d", len(tcp_headers))
 
-        if args.before:
-            tcp_headers = keep_headers_if_before(args.before, tcp_headers)
-            logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
+    if args.before:
+        tcp_headers = keep_headers_before(args.before, tcp_headers)
+        logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
+    if args.after:
+        tcp_headers = keep_headers_after(args.after, tcp_headers)
+        logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
+    if args.output:
+        dump_headers(args.output, tcp_headers)
 
-        if args.after:
-            tcp_headers = keep_headers_if_after(args.after, tcp_headers)
-            logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
-
-        if args.output:
-            dump_headers(args.output, tcp_headers)
-
+    # FIXME: This doesn't work so well yet
     if args.compare:
         logging.info("Compare rad_log and TCP server log ...")
         dump_double_headers("foobar.csv", rad_headers, tcp_headers)
