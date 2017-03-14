@@ -147,7 +147,7 @@ def parse_spy_log(infile, tables, include_data=False):
                         data1 = data
             if re.search("^010", line):
                 data = extract_binary_data(line)
-                if re.search("00 32", line):
+                if line[31:36] == "00 32":
                     data2 = data
                     if data1 and data2:
                         physical_car = convert_hex_str_to_int(data2[33:37])
