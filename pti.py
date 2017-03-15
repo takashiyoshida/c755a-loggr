@@ -6,13 +6,6 @@ from datetime import datetime
 import os.path
 import re
 
-# [4] SigDpcServer@NEDSMS_neldcs1a 03/06/17 15:44:28.789(03/06/17 15:44:28.738) <31005/3917302672> (SigDpc:5751)
-# <<Received "PTI actual" in NED location ignored, for trainId = 33 : Car number (66) <> train config Car number (65)>>
-# <<Received "PTI actual": CarNum 28 - TrainNum 0 - SchedNum 0 - DestNum 0 - CrewNum 0, 
-# for trainId = 14 (ATC Car number = 308)>>
-
-# 06/03/2017 15:42:46.346 - from device 'NED_PMSB_0002' through '142.17.30.8' to daccom : size 1460
-
 DAY   = "[0-3][0-9]"
 MONTH = "[0-1][0-9]"
 YEAR2 = "[0-9]{2}"
@@ -85,6 +78,8 @@ def write_csv(outfile, events):
 
 def parse_sig_log(infile):
     events = []
+    pti_info = {}
+
     with open(infile, 'r') as sig_log:
         line_no = 0
         for line in sig_log:
@@ -182,6 +177,7 @@ if __name__ == "__main__":
                             help='sig_log', dest='sig_logs')
     sig_parser.add_argument('-o', '--output', required=False, dest='output',
                             help='writes extracted PTI events into a CSV file')
+
     sig_parser.set_defaults(func=parse_sig_logs)
     spy_parser = subparsers.add_parser('spy', help='parses spylog for PTI event')
     spy_parser.add_argument('-l', '--log', nargs='+', required=True,
@@ -196,6 +192,3 @@ if __name__ == "__main__":
                         
     args = parser.parse_args()
     events = args.func(args)
-
-    for event in events:
-        print event
