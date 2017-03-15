@@ -220,6 +220,7 @@ def process_rad_logs(logs, year):
 
         header = None
         binary = []
+
         with open(infile, 'r') as log:
             for line in log:
                 line = line.strip()
@@ -392,18 +393,24 @@ if __name__ == "__main__":
             logging.warning("'year' not specified in the parameter; using %d" % datetime.now().year)
         rad_headers = process_rad_logs(args.rad_logs, args.year)
         logging.info("No. of headers extracted from rad_log: %d", len(rad_headers))
+        
+        if args.before:
+            rad_headers = keep_headers_before(args.before, rad_headers)
+        if args.after:
+            rad_headers = keep_headers_after(args.after, rad_headers)
+        if args.output:
+            dump_headers(args.output, rad_headers)
+
     if args.tcp_logs:
         tcp_headers = process_tcp_logs(args.tcp_logs)
         logging.info("No. of headers extracted from tcp log: %d", len(tcp_headers))
 
-    if args.before:
-        tcp_headers = keep_headers_before(args.before, tcp_headers)
-        logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
-    if args.after:
-        tcp_headers = keep_headers_after(args.after, tcp_headers)
-        logging.info("No. of headers extracted from rad_log: %d", len(tcp_headers))
-    if args.output:
-        dump_headers(args.output, tcp_headers)
+        if args.before:
+            tcp_headers = keep_headers_before(args.before, tcp_headers)
+        if args.after:
+            tcp_headers = keep_headers_after(args.after, tcp_headers)
+        if args.output:
+            dump_headers(args.output, tcp_headers)
 
     # FIXME: This doesn't work so well yet
     if args.compare:
