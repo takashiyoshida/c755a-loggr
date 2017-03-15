@@ -34,9 +34,9 @@ def extract_clicks(infile):
                     timestamp = datetime.strptime(match.group(1), "%m/%d/%y %H:%M:%S")
                     #print "%s,%s" % (timestamp, state)
                     if state == "IN":
-                        click_in.append((timestamp, state))
+                        click_in.append((timestamp, line, state))
                     else:
-                        click_out.append((timestamp, state))
+                        click_out.append((timestamp, line, state))
     return (click_in, click_out)
 
 def process_clicks(click_in, click_out, outfile):
@@ -61,14 +61,14 @@ def process_clicks(click_in, click_out, outfile):
 
     count = min(len(click_in), len(click_out))
     with open(outfile, 'wb') as csvfile:
-        fieldnames = ['Timestamp', 'Elapsed Seconds', 'State']
+        fieldnames = ['Timestamp', 'Message', 'Elapsed Seconds', 'State']
         writer = csv.DictWriter(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL, fieldnames=fieldnames)
         #writer.writeheader()
 
         for i in xrange(count):
             diff = click_out[i][0] - click_in[i][0]
-            writer.writerow({'Timestamp': click_in[i][0], 'Elapsed Seconds': 0, 'State': click_in[i][1]})
-            writer.writerow({'Timestamp': click_out[i][0], 'Elapsed Seconds': diff.seconds, 'State': click_out[i][1]})
+            writer.writerow({'Timestamp': click_in[i][0], 'Message': click_in[i][1], 'Elapsed Seconds': 0, 'State': click_in[i][2]})
+            writer.writerow({'Timestamp': click_out[i][0], 'Message': click_out[i][1], 'Elapsed Seconds': diff.seconds, 'State': click_out[i][2]})
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(prog='clicky')
