@@ -28,7 +28,7 @@ class TmcEvent:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog = "tmc-hammer",
                                      description = "")
-    parser.add_argument("-l", "--log", required = True, help = "tmc_log", dest = "log")
+    parser.add_argument("-l", "--log", nargs="+", required = True, help = "tmc_log", dest = "logs")
     parser.add_argument("-t", "--timetable", help = "plaintext timetable", dest = "timetable")
     parser.add_argument("-s", "--shift", nargs = 2, type = int, help = "Shift the trips in timetable by [+-]HH MM", dest = "delta")
 
@@ -45,33 +45,33 @@ if __name__ == "__main__":
         print delta
 
     logParser = ScsLogParser()
-    eventList = logParser.parse_log(args.log)
+    eventList = logParser.parse_log(args.logs)
 
     tmcEventList = []
     tmcEvent = None
 
     for event in eventList:
         match = re.match(TmcPattern.arrivalControl, event._text)
-        if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Arrival Control")
-        match = re.match(TmcPattern.departureControl, event._text)
-        if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Departure Control")
+#         if match:
+#             tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Arrival Control")
+#         match = re.match(TmcPattern.departureControl, event._text)
+#         if match:
+#             tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Departure Control")
         match = re.match(TmcPattern.enterPlatform, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Entry %s" % (match.group(4)))
         match = re.match(TmcPattern.exitPlatform, event._text)
         if match:
             tmcEvent = TmcEvent(event._timestamp, match.group(1), match.group(2), match.group(3), "Exit %s" % (match.group(4)))
-        match = re.match(TmcPattern.routeAssign, event._text)
-        if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(2), match.group(1), None, "Route Assignment")
-        match = re.match(TmcPattern.routeSet, event._text)
-        if match:
-            tmcEvent = TmcEvent(event._timestamp, None, match.group(1), match.group(2), "Route Set")
-        match = re.match(TmcPattern.ptiControl, event._text)
-        if match:
-            tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(2), "PTI control sent")
+#         match = re.match(TmcPattern.routeAssign, event._text)
+#         if match:
+#             tmcEvent = TmcEvent(event._timestamp, match.group(2), match.group(1), None, "Route Assignment")
+#         match = re.match(TmcPattern.routeSet, event._text)
+#         if match:
+#             tmcEvent = TmcEvent(event._timestamp, None, match.group(1), match.group(2), "Route Set")
+#         match = re.match(TmcPattern.ptiControl, event._text)
+#         if match:
+#             tmcEvent = TmcEvent(event._timestamp, match.group(1), None, match.group(2), "PTI control sent")
         if tmcEvent != None:
             tmcEventList.append(tmcEvent)
             tmcEvent = None
