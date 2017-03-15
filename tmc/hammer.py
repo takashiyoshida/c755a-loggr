@@ -9,8 +9,8 @@ import re
 # [2] TmcSupServer@OCCATS_nelats2a 12/21/16 0:37:5.016 <7137/7137> (sigint_ArrDep:124) <<Arrival ctrl sent to Car# 067, StopPoint RT2D, time(1482251845) 00:37:25>>
 
 # Regex patterns
-MONTH  = "[0-1][0-9]"
-DAY    = "[0-3][0-9]"
+MONTH  = "[0-1]?[0-9]"
+DAY    = "[0-3]?[0-9]"
 YEAR   = "[0-9]{2}"
 HOUR   = "[0-2]?[0-9]"
 MINUTE = "[0-5]?[0-9]"
