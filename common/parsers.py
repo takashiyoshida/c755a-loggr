@@ -24,30 +24,31 @@ class ScsLogParserState:
     multiline = 2
 
 class ScsLogParser:
-    def parse_log(self, infile):
+    def parse_log(self, logs):
         state = ScsLogParserState.unknown
         event = None
         eventList = []
 
-        with open(infile, 'r') as log:
-            for line in log:
-                line = line.strip()
+        for infile in logs:
+            print "infile:", infile
+            with open(infile, 'r') as log:
+                for line in log:
+                    line = line.strip()
 
-                match = re.match(ScsPattern.header, line)
-                if match:
-                    if state != ScsLogParserState.unknown:
-                        eventList.append(event)
+                    match = re.match(ScsPattern.header, line)
+                    if match:
+                        if state != ScsLogParserState.unknown:
+                            eventList.append(event)
 
-                    event = ScsLogEvent(match.group(1), match.group(2), match.group(4))
-                    state = ScsLogParserState.header
-                else:
-                    if state == ScsLogParserState.unknown:
-                        # TODO Log error in more meaningful manner
-                        print "Error: %s\n" % (line)
+                        event = ScsLogEvent(match.group(1), match.group(2), match.group(4))
+                        state = ScsLogParserState.header
                     else:
-                        event.appendText(line)
-                        state = ScsLogParserState.multiline
-            if event != None:
-                eventList.append(event)
-
+                        if state == ScsLogParserState.unknown:
+                            # TODO Log error in more meaningful manner
+                            print "Error: %s\n" % (line)
+                        else:
+                            event.appendText(line)
+                            state = ScsLogParserState.multiline
+                if event != None:
+                    eventList.append(event)
         return eventList
